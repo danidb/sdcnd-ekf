@@ -28,5 +28,8 @@
 *.out
 *.app
 
-# Data 
+# Data
 data/
+
+# The visualizer
+viz/
