@@ -1,6 +1,6 @@
 #include <iostream>
 #include "tools.h"
-#include <math.h> // pow, sqrt
+#include <math.h> // pow, sqrt, arcan
 #include <assert.h>
 
 using Eigen::VectorXd;
@@ -19,6 +19,9 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
   assert(estimations.size() > 0); 
   assert(estimations.size() == ground_truth.size()); 
 
+  VectorXd rmse = VectorXd(4);
+  rmse <<  0, 0, 0, 0;
+  
   // collect squared error, compute the mean
   for(int i=0; i < estimations.size(); ++i){
     
@@ -56,5 +59,17 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 
   return jacobian;
 }
+
+
+VectorXd Tools::CartesianToPolar(const VectorXd& x) {
+  //  a self-explanatory method
+  assert(x.size() == 4);
     
+  VectorXd polar_output = VectorXd(3);
+  polar_output << sqrt(pow(x[0], 2) + pow(x[1], 2)),
+    atan(x[1]/x[0]),
+    (x[0] * x[2] + x[1] * x[3])/sqrt(pow(x[0], 2) + pow(x[1],  2));
+  
+  return polar_output;  
+}
 

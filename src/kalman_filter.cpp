@@ -1,4 +1,7 @@
 #include "kalman_filter.h"
+#include "tools.h"
+#include <iostream>
+using namespace std;
 
 
 using Eigen::MatrixXd;
@@ -18,26 +21,30 @@ void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
   Q_ = Q_in;
 }
 
-void KalmanFilter::Predict() {  
+void KalmanFilter::Predict() {
   x_ = F_ * x_;
-  P_ = F_ * P_ * F_.transpose() + Q_;
-  
+  P_ = F_ * P_ * F_.transpose() +  Q_;  
 }
 
 void KalmanFilter::Update(const VectorXd &z) {
-  VectorXd z_prime = H_  * x_;
-  MatrixXd S = H_ * P_ * H_.transpose() + R_;
-  MatrixXd K = P_ * H_.transpose()*S.inverse(); 
-
-  // new state
-  x_ = x_ + K * (z - z_prime);
-  P_ = (MatrixXd.Identity(2,2) - K * H_) * P_;
-  
+  VectorXd y = z - H_ * x_;
+  UpdateSecondary(y);
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
-  /**
-  TODO:
-    * update the state by using Extended Kalman Filter equations
-  */
+  Tools tools; 
+  VectorXd y = z - tools.CartesianToPolar(x_);
+  UpdateSecondary(y);
+}
+
+
+void KalmanFilter::UpdateSecondary(const VectorXd &y) {
+  // the jacobian has been pre-computed
+  MatrixXd S = H_ * P_ * H_.transpose() + R_;
+  MatrixXd K = P_ * H_.transpose()*S.inverse(); 
+  
+  // new state
+  x_ = x_ + (K * y);
+  
+  P_ = (MatrixXd::Identity(4,4) - K * H_) * P_;
 }

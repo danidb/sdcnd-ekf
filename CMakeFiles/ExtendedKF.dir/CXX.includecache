@@ -1021,6 +1021,8 @@ FusionEKF.h
 /home/dani/dev/sdcnd/term_2/sdcnd-ekf/src/FusionEKF.h
 tools.h
 /home/dani/dev/sdcnd/term_2/sdcnd-ekf/src/tools.h
+math.h
+/home/dani/dev/sdcnd/term_2/sdcnd-ekf/src/math.h
 Eigen/Dense
 /home/dani/dev/sdcnd/term_2/sdcnd-ekf/src/Eigen/Dense
 iostream
@@ -1049,6 +1051,10 @@ Eigen/Dense
 /home/dani/dev/sdcnd/term_2/sdcnd-ekf/src/kalman_filter.cpp
 kalman_filter.h
 /home/dani/dev/sdcnd/term_2/sdcnd-ekf/src/kalman_filter.h
+tools.h
+/home/dani/dev/sdcnd/term_2/sdcnd-ekf/src/tools.h
+iostream
+-
 
 /home/dani/dev/sdcnd/term_2/sdcnd-ekf/src/kalman_filter.h
 Eigen/Dense
@@ -1083,6 +1089,10 @@ iostream
 -
 tools.h
 /home/dani/dev/sdcnd/term_2/sdcnd-ekf/src/tools.h
+math.h
+-
+assert.h
+-
 
 /home/dani/dev/sdcnd/term_2/sdcnd-ekf/src/tools.h
 vector
