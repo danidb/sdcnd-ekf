@@ -32,4 +32,5 @@
 data/
 
 # The visualizer
-viz/
+sim/
+out.txt
