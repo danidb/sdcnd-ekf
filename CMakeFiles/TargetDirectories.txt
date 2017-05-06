@@ -1,3 +1,0 @@
-/home/dani/dev/sdcnd/term_2/sdcnd-ekf/CMakeFiles/rebuild_cache.dir
-/home/dani/dev/sdcnd/term_2/sdcnd-ekf/CMakeFiles/edit_cache.dir
-/home/dani/dev/sdcnd/term_2/sdcnd-ekf/CMakeFiles/ExtendedKF.dir

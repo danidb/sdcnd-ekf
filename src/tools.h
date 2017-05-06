@@ -13,7 +13,9 @@ public:
 
   Eigen::MatrixXd CalculateJacobian(const Eigen::VectorXd& x_state);
 
-  Eigen::VectorXd CartesianToPolar(const Eigen::VectorXd& x); 
+  Eigen::VectorXd CartesianToPolar(const Eigen::VectorXd& x);
+
+  float WrapAnglePi(const float angle); 
 };
 
 #endif /* TOOLS_H_ */

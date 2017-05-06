@@ -15,7 +15,7 @@ using std::vector;
 FusionEKF::FusionEKF() {
   is_initialized_ = false;
 
-  previous_timestamp_ = 0;
+  previous_timestamp_ = 0.0;
 
   // initializing matrices
   R_laser_ = MatrixXd(2, 2);
@@ -30,16 +30,18 @@ FusionEKF::FusionEKF() {
   // measurement covariance matrix - radar
   R_radar_ << 0.09, 0, 0,
     0, 0.0009, 0,
-    0, 0, 0.0;
+    0, 0, 0.09;
 
   // H_radar_ is the jacobian (later)
   H_laser_ << 1, 0, 0, 0,
     0, 1, 0, 0;
   
-  // use the default constructor - we assign instance variables later.
-  // Don't tell Steve McConnell...
-  KalmanFilter ekf_ = KalmanFilter();
+   H_radar_ << 0, 0, 0 ,0,
+     0, 0, 0, 0,
+     0, 0, 0, 0;
 
+  
+  KalmanFilter ekf_ = KalmanFilter();
   return;
 }
 
@@ -56,36 +58,35 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    ****************************************************************************/
   
   if (!is_initialized_) {
-    
     // first measurement
     cout << "EKF: " << endl;
     ekf_.x_ = VectorXd(4);
     ekf_.x_ << 1, 1, 1, 1;
 
-    // initial  covariance (process, dt = 0, t = 0)
-    ekf_.Q_ = MatrixXd(4,4);
-    ekf_.Q_ << 0, 0, 0, 0,
-      0, 0, 0, 0,
-      0, 0, 0, 0,
-      0, 0, 0, 0;
-
+    // initial  state covariance - the entire "playing field" for px, py,
+    // none for velocity
     ekf_.P_ = MatrixXd(4, 4);
-    ekf_.P_ << 1000, 0, 0, 0,
-      0, 1000, 0, 0,
-      0, 0, 0, 0,
-      0, 0, 0, 0;
-    
+    ekf_.P_ << 200, 0, 0, 0,
+      0, 80, 0, 0,
+      0, 0, 15, 5,
+      0, 0, 5, 10;
+       
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       // radius
       float rho = measurement_pack.raw_measurements_[0];
-      // angle 
+      // angle
       float phi = measurement_pack.raw_measurements_[1];
-
-      ekf_.x_ <<  rho * cos(phi), rho * sin(phi), 0, 0;
+      // velocity
+      float rho_dot = measurement_pack.raw_measurements_[3];
+      
+      ekf_.x_ <<  rho * cos(phi), rho * sin(phi), rho_dot * cos(phi), rho_dot * sin(phi);
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
-      ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 0, 0; 
+      ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 0, 0;
     }
+
+    // set the current timestamp
+    previous_timestamp_ = measurement_pack.timestamp_;
     
     // done initializing, no need to predict or update
     is_initialized_ = true;
@@ -110,11 +111,12 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   
   ekf_.Q_ = MatrixXd(4, 4);
   ekf_.Q_ <<
-    pow(dt, 4)/4 * noise_ax, 0,                       pow(dt, 3)/3 * noise_ax, 0,    
-    0,                       pow(dt, 4)/4 * noise_ay, 0,                       pow(dt, 3)/3 * noise_ay,
+    pow(dt, 4)/4 * noise_ax, 0,                       pow(dt, 3)/2 * noise_ax, 0,    
+    0,                       pow(dt, 4)/4 * noise_ay, 0,                       pow(dt, 3)/2 * noise_ay,
     pow(dt, 3)/2 * noise_ax, 0,                        pow(dt, 2)*noise_ax,    0, 
     0,                       pow(dt, 3)/2 * noise_ay,  0,                      pow(dt, 2) * noise_ay;
-  
+
+
   ekf_.Predict();
 
   /*****************************************************************************
@@ -136,16 +138,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     ekf_.H_ = H_laser_;
     ekf_.R_ = R_laser_;
 
-    ekf_.P_ = MatrixXd(4, 4);
-    ekf_.P_ << 1000, 0, 0, 0,
-      0, 1000, 0, 0,
-      0, 0, 10, 0,
-      0, 0, 0, 10; 
-    
     ekf_.Update(measurement_pack.raw_measurements_);    
   }
-
-  // print the output
-  cout << "x_ = " << ekf_.x_;
-  cout << "P_ = " << ekf_.P_ << endl;
 }
