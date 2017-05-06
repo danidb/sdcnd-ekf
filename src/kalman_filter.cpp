@@ -28,7 +28,7 @@ void KalmanFilter::Predict() {
 
 void KalmanFilter::Update(const VectorXd &z) {
   VectorXd y = z - H_ * x_;
-  UpdateSecondary(y, false);
+  UpdateSecondary(y);
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
@@ -36,22 +36,15 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   VectorXd y = z - tools.CartesianToPolar(x_);
   y[1] = tools.WrapAnglePi(y[1]);
   // we need to scale y appropriately so that it's betten -pi and
-  UpdateSecondary(y, true);
+  UpdateSecondary(y);
 }
 
 
-void KalmanFilter::UpdateSecondary(const VectorXd &y, const bool is_radar) {
+void KalmanFilter::UpdateSecondary(const VectorXd &y) {
   // the jacobian has been pre-computed
   MatrixXd S = H_ * P_ * H_.transpose() + R_;
   MatrixXd K = P_ * H_.transpose() * S.inverse(); 
   // new state
   x_ = x_ + (K * y);
-  
-  //  if (is_radar) { 
-  //    // update  Jacobian once  more, but only if we're dealing with radar data.  
-    //    Tools tools;
-  //    H_ = tools.CalculateJacobian(x_);
-  //  }
-  
   P_ = (MatrixXd::Identity(4,4) - K * H_) * P_;
 }

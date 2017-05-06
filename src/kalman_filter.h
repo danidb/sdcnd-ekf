@@ -4,7 +4,7 @@
 
 class KalmanFilter {
 
-  void UpdateSecondary(const Eigen::VectorXd &y, const  bool is_radar);
+  void UpdateSecondary(const Eigen::VectorXd &y);
   
 public: 
 
