@@ -68,8 +68,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     ekf_.P_ = MatrixXd(4, 4);
     ekf_.P_ << 200, 0, 0, 0,
       0, 80, 0, 0,
-      0, 0, 15, 5,
-      0, 0, 5, 10;
+      0, 0, 15, 0,
+      0, 0, 0, 10;
        
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       // radius
