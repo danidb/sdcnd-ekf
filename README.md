@@ -5,7 +5,7 @@ Some template code was  provided  by Udacity. Here, apart from minor modificatio
 
 
 ## Results
-The Extended Kalman Filter is applied to the sample data provided by Udacity. The result can be visualized below (see `viz.R`). 
+The Extended Kalman Filter is applied to the sample data provided by Udacity, **note that the second "new" set of sample data is used here.** The results are plotted below (see `viz.R`). 
 
 ![EKF Results.](sample-data-output.png)
 
